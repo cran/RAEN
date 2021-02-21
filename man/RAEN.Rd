@@ -5,7 +5,15 @@
 \alias{predict.RAEN}
 \title{Random Ensemble Variable Selection for High Dimensional Data}
 \usage{
-RAEN(x, y, B, ngrp = floor(15 * ncol(x)/nrow(x)), parallel = TRUE, ncore = 2)
+RAEN(
+  x,
+  y,
+  B,
+  ngrp = floor(15 * ncol(x)/nrow(x)),
+  parallel = TRUE,
+  family = "competing",
+  ncore = 2
+)
 
 \method{predict}{RAEN}(object, newdata, ...)
 }
@@ -19,6 +27,8 @@ RAEN(x, y, B, ngrp = floor(15 * ncol(x)/nrow(x)), parallel = TRUE, ncore = 2)
 \item{ngrp}{the number of blocks to separate variables into. Default is 15*p/N, where p is the number of predictors and N is the sample size.}
 
 \item{parallel}{Logical TRUE or FALSE. Whether to use multithread computing, which can save consideratable amount of time for high dimensional data. Default is TRUE.}
+
+\item{family}{what family of data types. Default is 'competing'. Quantile regression for competing risks will be available through the developmental version on github}
 
 \item{ncore}{Number of cores used for parallel computing, if parallel=TRUE}
 

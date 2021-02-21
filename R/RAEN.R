@@ -6,6 +6,7 @@
 #' @param B times of bootstrap
 #' @param ngrp the number of blocks to separate variables into. Default is 15*p/N, where p is the number of predictors and N is the sample size.
 #' @param  parallel Logical TRUE or FALSE. Whether to use multithread computing, which can save consideratable amount of time for high dimensional data. Default is TRUE.
+#' @param  family what family of data types. Default is 'competing'. Quantile regression for competing risks will be available through the developmental version on github
 #' @param ncore Number of cores used for parallel computing, if parallel=TRUE
 #' @return a dataframe with the variable names and the regression coefficients
 #' @rdname RAEN
@@ -20,7 +21,7 @@
 #' fgrp<-deCorr(x, ngrp=20)
 #' }
 #' @export
-RAEN<-function(x,y,B,ngrp=floor(15*ncol(x)/nrow(x)), parallel=TRUE, ncore=2){
+RAEN<-function(x,y,B,ngrp=floor(15*ncol(x)/nrow(x)), parallel=TRUE, family='competing', ncore=2){
   
   if (parallel){
   myClust <- parallel::makeCluster(ncore)

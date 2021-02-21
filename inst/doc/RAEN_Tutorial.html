@@ -14,6 +14,35 @@
 
 <title>A Robust And Generalized Variable Selection Method (RAEN) For High Dimensional Competing Risk Analysis</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -27,26 +56,27 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -55,9 +85,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -318,46 +348,44 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="installation" class="section level1">
 <h1>Installation</h1>
 <p>RAEN can be installed from R-CRAN</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">'RAEN'</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">install.packages</span>(<span class="st">&#39;RAEN&#39;</span>)</span></code></pre></div>
 <p>Users can install the developmental version from Github.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">library</span>(devtools)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">install_github</span>(<span class="st">'saintland/RAEN'</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">library</span>(devtools)</span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">install_github</span>(<span class="st">&#39;saintland/RAEN&#39;</span>)</span></code></pre></div>
 </div>
 <div id="splitting-correlated-variables" class="section level1">
 <h1>Splitting correlated variables</h1>
-<p>The simulated data <code>toydata</code> contains 200 rows, time to event, censoring status, and 1000 predictors, 60 of which are true predictors (<span class="math inline">\(X1-X20\)</span> and <span class="math inline">\(X40-X80\)</span>). The variable correlation blocks are identified as the following example.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">require</span>(RAEN,<span class="dt">quietly =</span> T)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt; Loaded lars 1.2</span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="kw">data</span>(toydata)</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">x=toydata[,<span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)]</a>
-<a class="sourceLine" id="cb3-5" data-line-number="5">y=toydata[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]</a>
-<a class="sourceLine" id="cb3-6" data-line-number="6">fgrp&lt;-<span class="kw">deCorr</span>(x)</a>
-<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; No: 1 cluster contains : 19 , remaining 981 </span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; No: 2 cluster contains : 17 , remaining 964 </span></a>
-<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; No: 3 cluster contains : 19 , remaining 945 </span></a>
-<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt; No: 4 cluster contains : 18 , remaining 927 </span></a>
-<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; No: 5 cluster contains : 2 , remaining 925</span></a></code></pre></div>
+<p>The simulated data <code>toydata</code> contains 200 rows, time to event, censoring status, and 1000 predictors, 20 of which are true predictors (<span class="math inline">\(X1-X20\)</span>). The variable correlation blocks are identified as the following example.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">require</span>(RAEN,<span class="dt">quietly =</span> T)</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="co">#&gt; Loaded lars 1.2</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="kw">data</span>(toydata)</span>
+<span id="cb3-4"><a href="#cb3-4"></a>x=toydata[,<span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)]</span>
+<span id="cb3-5"><a href="#cb3-5"></a>y=toydata[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]</span>
+<span id="cb3-6"><a href="#cb3-6"></a>fgrp&lt;-<span class="kw">deCorr</span>(x)</span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="co">#&gt; </span></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co">#&gt; No: 1 cluster contains : 10 , remaining 990 </span></span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="co">#&gt; </span></span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="co">#&gt; No: 2 cluster contains : 9 , remaining 981 </span></span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="co">#&gt; </span></span>
+<span id="cb3-12"><a href="#cb3-12"></a><span class="co">#&gt; No: 3 cluster contains : 9 , remaining 972 </span></span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="co">#&gt; </span></span>
+<span id="cb3-14"><a href="#cb3-14"></a><span class="co">#&gt; No: 4 cluster contains : 4 , remaining 968</span></span></code></pre></div>
 <p>RAEN discovers 5 groups of correlated variables, with group sizes ranging from 2 to 19. Users can either determine the number of subgroups (<code>ngrp</code>) to separate the correlated variables, or use the default setting <span class="math inline">\(15p/n\)</span>. The correlated variables and the remaining weakly correlated variables will be separated randomly into different subsets or blocks, such that each subset is weakly correlated. The benefit of this de-correlation is that the penalization based variable selection method (like Lasso) will not randomly drop correlated variables in such subsets. The variable selection is executed via the functions <code>grpselect</code> and <code>r2select</code>. Users can call the main function <code>RAEN</code> to run the whole process,</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">library</span>(RAEN)</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2">myres&lt;-<span class="kw">RAEN</span>(x,y, <span class="dt">B =</span> <span class="dv">50</span>, <span class="dt">ncore=</span><span class="dv">30</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">library</span>(RAEN)</span>
+<span id="cb4-2"><a href="#cb4-2"></a>myres&lt;-<span class="kw">RAEN</span>(x,y, <span class="dt">B =</span> <span class="dv">50</span>, <span class="dt">family=</span><span class="st">&#39;competing&#39;</span>)</span></code></pre></div>
 <p>where <code>x</code> is the predictor matrix of <span class="math inline">\(n \times p\)</span>, <code>y</code> is the time and censoring status data frame, and <code>ncore</code> is the number of threads to use for parallel processing. The selected variables and the regression coefficients are returned.</p>
 <pre><code>  id        coef
- x1 -0.21695698
- x2 -0.41486949
- x3 -0.21307438
- x4 -0.05911834
+x1  -0.55913895
+x2  -0.45441885
+x3  -0.66547988
+x4  -0.2042797
+x5  -0.51010548
 ...
 ...
- x75 -0.3823193
- x76 -0.6026619
- x77 -0.2440929
- x78 -0.3976471
- x80 -0.3249638</code></pre>
+x18 -0.84730951
+x19 -1.02583733
+x20 -0.98603833
+...</code></pre>
 </div>
 
 

@@ -21,5 +21,5 @@ fgrp<-deCorr(x)
 
 ## ----eval=F-------------------------------------------------------------------
 #  library(RAEN)
-#  myres<-RAEN(x,y, B = 50, ncore=30)
+#  myres<-RAEN(x,y, B = 50, family='competing')
 

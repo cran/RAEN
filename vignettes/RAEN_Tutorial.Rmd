@@ -32,7 +32,7 @@ install_github('saintland/RAEN')
 ```
 # Splitting correlated variables
 
-The simulated data `toydata` contains 200 rows, time to event, censoring status, and 1000 predictors, 60 of which are true predictors ($X1-X20$ and $X40-X80$). The variable correlation blocks are identified as the following example. 
+The simulated data `toydata` contains 200 rows, time to event, censoring status, and 1000 predictors, 20 of which are true predictors ($X1-X20$). The variable correlation blocks are identified as the following example. 
 ```{r}
 require(RAEN,quietly = T)
 data(toydata)
@@ -45,22 +45,22 @@ RAEN discovers 5 groups of correlated variables, with group sizes ranging from 2
 
 ```{r eval=F}
 library(RAEN)
-myres<-RAEN(x,y, B = 50, ncore=30)
+myres<-RAEN(x,y, B = 50, family='competing')
 ```
 where `x` is the predictor matrix of $n \times p$, `y` is the time and censoring status data frame, and `ncore` is the number of threads to use for parallel processing. The selected variables and the regression coefficients are returned.
 
 ```
   id        coef
- x1 -0.21695698
- x2 -0.41486949
- x3 -0.21307438
- x4 -0.05911834
+x1	-0.55913895
+x2	-0.45441885
+x3	-0.66547988
+x4	-0.2042797
+x5	-0.51010548
 ...
 ...
- x75 -0.3823193
- x76 -0.6026619
- x77 -0.2440929
- x78 -0.3976471
- x80 -0.3249638
+x18	-0.84730951
+x19	-1.02583733
+x20	-0.98603833
+...
 ```
 
